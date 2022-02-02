@@ -1,64 +1,56 @@
 import React from "react"
+//import React, { useState } from "react"
 
-const Header = (prop) => {
+const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
+
+const History = (props) => {
+  if (props.arr.length === 0) {
+    return (
+    <h1>Press the left or right button</h1>
+    )
+  }
   return (
-    <h1>{prop.course}</h1>
+    <p>{props.arr.join(' + ')}</p>
   )
-}
+} 
 
-const Content = (prop) => {
-
-  const arr = prop.parts
-  return (
-    <>
-      <Part part={arr[0].name} exercise={arr[0].exercises}/>
-      <Part part={arr[1].name} exercise={arr[1].exercises}/>
-      <Part part={arr[2].name} exercise={arr[2].exercises}/>
-      </>
-  )  
-}
-
-const Part = (prop) => {
-  return (
-    <p>
-      {prop.part} {prop.exercise}
-    </p>
-  )
-}
-
-const Total = (prop) => {
-  return (
-    <>
-      <p>Number of exercises {prop.parts[0].exercises + prop.parts[1].exercises + prop.parts[2].exercises}</p>
-    </>
-  )
-}
+const Display = (props) => <h1>{props.value}</h1>
 
 const App = () => {
-  const course = {
-    name: 'Half stack application development',
-    parts: [
-      {
-        name: 'Fundementals of react',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
+
+
+  const [left, setLeft] = React.useState(0)
+  const [right, setRight] = React.useState(0)
+  const [allClicks, setAll] = React.useState([])
+
+  const addLeft = () => {
+    setAll(allClicks.concat('L')) 
+    setLeft(left + 1)
   }
+
+  const addRight = () => {
+    setAll(allClicks.concat('R'))
+    setRight(right + 1)
+  }
+
+  const setToZero = () => {
+    setLeft(0)
+    setRight(0)
+    setAll([])
+  }
+
+  const setLValue = (val) => () => setLeft(val)
+
 
   return (
     <>
-    <Header course={course.name}/>
-    <Content parts={course.parts}/>
-    <Total parts={course.parts} />
-    
+      <Display value={left} />
+      <Display value={right} />
+      <Button onClick={addLeft} text={'Left click'} />
+      <Button onClick={addRight} text={'Right click'} />
+      <Button onClick={setToZero} text={'Reset'}/>
+      <Button onClick={setLValue(1000)} text={'Set to 1000'} />
+      <History arr={allClicks} />
     </>
   )
 }
