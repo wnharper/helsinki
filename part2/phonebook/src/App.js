@@ -1,11 +1,18 @@
 import React, { useState } from 'react'
-import Person from './components/person'
 import PeopleList from './components/peopleList'
 import Input from './components/formInput'
+import axios from 'axios'
+
 
 const App = (props) => {
 
+  const hook = (response) => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => setPersons(response.data))
+  }
   
+  React.useEffect(hook, [])
 
   const [persons, setPersons] = useState(props.phonebook) 
   const [newName, setNewName] = useState('')
