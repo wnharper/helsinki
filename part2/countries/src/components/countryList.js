@@ -8,8 +8,6 @@ const search = ({arr, searchTerm}) => {
          )
   }
 
-const doSomthing = () => console.log('Yes!')
-
 const CountryList = ({arr, searchTerm}) => {
 
     const list = search({arr, searchTerm})

@@ -9,6 +9,7 @@ const search = ({arr, searchTerm}) => {
     })
   }
 
-const PeopleList = ({arr, searchTerm}) => search({arr, searchTerm}).map(person => <Person key={person.id} name={person.name} number={person.number} />)
+const PeopleList = ({arr, searchTerm, handleDelete}) => 
+search({arr, searchTerm}).map(person => <Person key={person.id} id={person.id} name={person.name} number={person.number} handleDelete={handleDelete} />)
 
 export default PeopleList

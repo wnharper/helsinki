@@ -1,23 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PeopleList from './components/peopleList'
 import Input from './components/formInput'
-import axios from 'axios'
+import personService from './services/persons'
 
 
-const App = (props) => {
+const App = () => {
 
-  const hook = (response) => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => setPersons(response.data))
-  }
-  
-  React.useEffect(hook, [])
 
-  const [persons, setPersons] = useState(props.phonebook) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
+  const [rerender, setRerender] = useState(false)
+
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(response => setPersons(response))
+      
+  }, [rerender])
 
   // OnChange handlers
   const handleAddPerson = (event) => setNewName(event.target.value)
@@ -26,26 +27,55 @@ const App = (props) => {
 
   const addPerson = (event) => {
     event.preventDefault()
+    let duplicateId = 0
     let duplicate = false
 
     persons.forEach(person => {
       if (person.name === newName) {
-          duplicate = true
-          window.alert(`${newName} is already in the phonebook`)  
+          duplicateId = person.id
+          duplicate = true 
       }
     })
 
-    if (!duplicate) {
-      const newPersonObject = {
-        name: newName,
-        id: persons.length + 1,
-        number: newNumber
-      }
-      setPersons(persons.concat(newPersonObject))
+    const newPersonObject = {
+      name: newName,
+      id: persons.length + 1,
+      number: newNumber
     }
+
+    if (duplicate) {
+      if (window.confirm(`${newPersonObject.name} is already in the phonebook, replace old number with new one?`)) {
+        
+        newPersonObject.id = duplicateId
+
+        personService
+          .update(duplicateId, newPersonObject)
+          .then(setRerender(!rerender))
+      } 
+    } else {
+    
+      personService
+        .create(newPersonObject)
+        .then(response => setPersons(persons.concat(response)))
+    }
+
     setNewName('')
     setNewNumber('')
   }
+
+  const handleDelete = (id) => {
+
+    const result = window.confirm('Do you really want to delete this person?')
+
+    if (result) {
+        personService
+        .del(id)
+        .then(persons.filter(person => person.id !== id))
+        setRerender(!rerender)
+
+    }
+    
+}
 
 
   return (
@@ -59,9 +89,12 @@ const App = (props) => {
           <Input label={'Number'} value={newNumber} onChange={handleAddNumber} />
           <button type="submit">add</button>
       </form>
+
+      <button onClick={() => handleDelete(6)}>test</button>
+
       
       <h2>Numbers</h2>
-      <PeopleList arr={persons} searchTerm={newSearch}/>
+      <PeopleList arr={persons} searchTerm={newSearch} handleDelete={handleDelete}/>
 
     </div>
   )
