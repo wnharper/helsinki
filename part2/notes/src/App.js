@@ -1,6 +1,9 @@
-import Note from "./components/note";
-import React, {useEffect, useState} from "react";
+import Note from "./components/note"
+import React, {useEffect, useState} from "react"
 import noteServices from './services/notes'
+import Notification from "./components/notification"
+import './index.css'
+import Footer from "./components/footer"
 
 
 const App = () => {
@@ -8,6 +11,7 @@ const App = () => {
   const [notes, setNote] = useState([])
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
+  const [errorMsg, setErrorMsg] = useState(null)
 
   useEffect(() => {
     noteServices
@@ -54,9 +58,11 @@ const App = () => {
         setNote(notes.map(note => note.id !== id ? note : response))
       })
       .catch(error => {
-        alert(
-          `the note '${note.content}' was already deleted from server`
+        setErrorMsg(
+
+          `The note '${note.content}' was already deleted from server`
         )
+        setTimeout(() => setErrorMsg(null), 5000)
         setNote(notes.filter(n => n.id !== id))
       })
   }
@@ -64,6 +70,7 @@ const App = () => {
   return (
     <div>
       <h1>Notes</h1>
+      <Notification message={errorMsg} />
       <ul>
         {notesToShow.map((note) => <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)} /> )}
       </ul>
@@ -73,6 +80,7 @@ const App = () => {
         <input value={newNote} onChange={handleNoteChange} />
         <button type="submit">Save</button>
       </form>
+      <Footer />
     </div>
   );
 }
