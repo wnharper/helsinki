@@ -1,16 +1,16 @@
 import axios from 'axios'
-const baseUrl = 'http://localhost:3001/notes'
+const baseUrl = '/api/notes'
 
 const getAll = () => {
   const request = axios.get(baseUrl)
-  const nonNote = {
-    "id": 22,
-    "content": "Hard coded note",
-    "date": "2022-05-30T15:39:34.091Z",
-    "important": false
+  // const nonNote = {
+  //   "id": 22,
+  //   "content": "Hard coded note",
+  //   "date": "2022-05-30T15:39:34.091Z",
+  //   "important": false
 
-  }
-  return request.then(response => response.data.concat(nonNote))
+  // }
+  return request.then(response => response.data)
 }
 
 const create = newObject => {

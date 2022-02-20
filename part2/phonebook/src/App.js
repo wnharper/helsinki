@@ -42,29 +42,23 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    let duplicateId = 0
-    let duplicate = false
 
-    persons.forEach(person => {
-      if (person.name === newName) {
-          duplicateId = person.id
-          duplicate = true 
-      }
-    })
+    const duplicateName = persons.find(p => p.name === newName)
 
     const newPersonObject = {
-      name: newName,
       id: persons.length + 1,
+      name: newName,      
       number: newNumber
     }
 
-    if (duplicate) {
+
+    if (duplicateName) {
       if (window.confirm(`${newPersonObject.name} is already in the phonebook, replace old number with new one?`)) {
         
-        newPersonObject.id = duplicateId
+        newPersonObject.id = duplicateName.id
 
         personService
-          .update(duplicateId, newPersonObject)
+          .update(duplicateName.id, newPersonObject)
           .then(setRerender(!rerender))
           notify(`${newPersonObject.name}'s number was updated`)
           
@@ -73,8 +67,12 @@ const App = () => {
     
       personService
         .create(newPersonObject)
-        .then(response => setPersons(persons.concat(response)))
-        notify(`${newPersonObject.name} was add to the phonebook`)
+        .then(response =>  {
+          setPersons(persons.concat(response))
+          notify(`${newPersonObject.name} was added to the phonebook`)
+        })
+        
+        .catch (error => errorNotify('Name already exists in phonebook'))
     }
 
     setNewName('')

@@ -18,6 +18,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "json-server -p3001 --watch db.json"
+   
   },
   "eslintConfig": {
     "extends": [
@@ -39,5 +40,11 @@
   },
   "devDependencies": {
     "json-server": "^0.17.0"
-  }
+  },
+
+  "resolutions": {
+    "mini-css-extract-plugin": "2.4.5"
+  },
+
+  "proxy": "http://localhost:3001"
 }
